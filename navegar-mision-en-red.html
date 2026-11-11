@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Navegar: Misión en Red</title>
+<style>
+:root{--b1:#e0f2fe;--b2:#7dd3fc;--card:#fff;--ink:#0f2540;--mut:#5b7191;--p0:#0284c7;--p1:#db2777;--ok:#16a34a;--bad:#dc2626;--gold:#d97706;--wave:#0ea5e9;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--b1:#071a33;--b2:#0b3558;--card:#10294a;--ink:#eaf4ff;--mut:#9db7d5;--p0:#38bdf8;--p1:#f472b6;--gold:#fbbf24;--wave:#0369a1}}
+:root[data-theme="dark"]{--b1:#071a33;--b2:#0b3558;--card:#10294a;--ink:#eaf4ff;--mut:#9db7d5;--p0:#38bdf8;--p1:#f472b6;--gold:#fbbf24;--wave:#0369a1}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;min-height:100%;font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;color:var(--ink);background:linear-gradient(var(--b1),var(--b2)) fixed var(--b1)}
+#app{max-width:860px;margin:auto;padding:10px 12px 110px;position:relative;z-index:2}
+header{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center}
+.pl{background:var(--card);border-radius:16px;padding:8px 12px;border:3px solid;display:flex;gap:8px;align-items:center;transition:.25s}
+.p0{border-color:var(--p0)}.p1{border-color:var(--p1);justify-content:flex-end}
+.pl.act{transform:scale(1.07);box-shadow:0 8px 20px rgba(0,0,0,.3)}
+.pl b{font-size:1rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.c0{color:var(--p0)}.c1{color:var(--p1)}
+.mid{text-align:center}#sc{font-size:2rem;font-weight:900;line-height:1}.cbx{font-size:.8rem;color:var(--gold);font-weight:800;min-height:1.1em}
+#track{position:relative;margin:16px 4px 4px}#nodes{display:flex}
+.nd{flex:1;text-align:center;font-size:1.3rem;opacity:.35;filter:grayscale(1)}.nd.on,.nd.dn{opacity:1;filter:none}
+#ship{position:absolute;top:-16px;font-size:1.7rem;transition:left .9s cubic-bezier(.5,1.6,.5,1);transform:translateX(-50%)}
+.tbar{height:12px;border-radius:8px;background:rgba(0,0,0,.18);margin:10px 0 0;overflow:hidden}.tbar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--bad),var(--gold),var(--ok));background-size:300% 100%;background-position:100% 0}
+#stage{margin-top:8px;animation:in .4s}@keyframes in{from{opacity:0;transform:translateY(14px)}}
+.tag{font-weight:800;color:var(--ink);opacity:.8;margin:8px 4px 0}
+.card{background:var(--card);border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(0,0,0,.18);margin:10px 0}
+.card h2,.card h3{margin:.2em 0 .5em}
+.k0{border-top:8px solid var(--p0)}.k1{border-top:8px solid var(--p1)}
+.good{border-left:8px solid var(--ok)}.bad{border-left:8px solid var(--bad)}
+.read{font-size:1.15rem;line-height:1.55}.hint{color:var(--mut);font-size:.92rem}
+.big{font-size:3rem;text-align:center}.hero{text-align:center}.hero h1{margin:.1em 0}
+.btn{border:0;border-radius:14px;padding:12px 20px;font:inherit;font-weight:800;background:var(--p0);color:#fff;cursor:pointer;font-size:1.05rem;box-shadow:0 4px 0 rgba(0,0,0,.3);margin:6px 4px}
+.btn:active{transform:translateY(3px);box-shadow:none}.btn.ok{background:var(--ok)}.btn.no{background:var(--bad)}
+.row{display:flex;flex-wrap:wrap;justify-content:center}
+.opt{display:block;width:100%;text-align:left;padding:13px 14px;margin:8px 0;border-radius:14px;border:3px solid var(--mut);background:var(--card);color:var(--ink);font:inherit;font-weight:700;cursor:pointer;transition:.15s}
+.opt.k0:hover{border-color:var(--p0);transform:translateX(4px)}.opt.k1:hover{border-color:var(--p1);transform:translateX(4px)}
+.opt:disabled{opacity:.35;cursor:not-allowed;transform:none!important}
+.pick{border:3px dashed currentColor;border-radius:14px;padding:12px;margin:8px 0;font-size:1.1rem}.pick b{color:var(--ink)}
+.bub{background:rgba(2,132,199,.12);border:2px solid var(--p0);border-radius:18px;padding:12px;min-height:54px;line-height:2}
+.chip{padding:4px 9px;border-radius:10px;font-weight:700}.chip.g{background:rgba(22,163,74,.25)}.chip.b{background:rgba(220,38,38,.22)}
+.msgb{background:rgba(0,0,0,.06);border-radius:14px;padding:10px;line-height:2.3}
+.sg{display:inline-block;padding:5px 9px;margin:2px;border-radius:10px;border:2px dashed var(--mut);cursor:pointer}
+.sg:hover{border-color:var(--p0)}.sg.f{background:rgba(220,38,38,.22);border:2px solid var(--bad)}.sg.n{opacity:.45;text-decoration:line-through}
+label{display:block;font-weight:700;margin:10px 0;text-align:left}
+input{width:100%;font:inherit;padding:10px;border-radius:12px;border:3px solid var(--mut);background:var(--b1);color:var(--ink);margin-top:4px}
+details{margin:4px 0 10px;color:var(--mut)}summary{cursor:pointer;font-weight:700}
+ul{line-height:1.6;padding-left:20px}
+.pop{position:fixed;left:50%;top:38%;transform:translateX(-50%);font-size:2.6rem;font-weight:900;color:var(--gold);text-shadow:0 3px 0 rgba(0,0,0,.3);animation:up 1.2s forwards;z-index:30;pointer-events:none}
+@keyframes up{to{top:22%;opacity:0}}
+.conf{position:fixed;top:-30px;font-size:26px;animation:fall 2.6s linear forwards;pointer-events:none;z-index:30}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
+.waves{position:fixed;left:0;right:0;bottom:0;height:70px;overflow:hidden;z-index:1;pointer-events:none}
+.waves svg{position:absolute;bottom:0;left:0;width:200%;height:60px;animation:wv 9s linear infinite}
+.waves .w2{animation-duration:6s;animation-direction:reverse;opacity:.55}
+@keyframes wv{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+ <header>
+  <div class="pl p0"><span>🔵</span><b class="c0" id="n0"></b></div>
+  <div class="mid"><div id="sc">0</div><div class="cbx" id="cb"></div></div>
+  <div class="pl p1"><b class="c1" id="n1"></b><span>🩷</span></div>
+ </header>
+ <div id="track"><div id="nodes"></div><div id="ship">⛵</div></div>
+ <div class="tbar" id="tbw" hidden><i id="tb"></i></div>
+ <main id="stage"></main>
+</div>
+<div class="waves" aria-hidden="true">
+ <svg viewBox="0 0 400 60" preserveAspectRatio="none"><path d="M0 30Q50 0 100 30T200 30T300 30T400 30V60H0Z" fill="var(--wave)" opacity=".6"/></svg>
+ <svg class="w2" viewBox="0 0 400 60" preserveAspectRatio="none"><path d="M0 36Q50 8 100 36T200 36T300 36T400 36V60H0Z" fill="var(--wave)"/></svg>
+</div>
+<script>
+const R=[
+{t:'caso',i:'📖',title:'El meme que se reenvió',
+a:'En el chat del curso aparece un meme con una foto de Laura tomada en su cumpleaños, con un texto burlón. En minutos llegan decenas de risas y varios lo reenvían a otros grupos. Sofía lo reenvía «solo por gracia».',
+b:'Laura se entera por una amiga y se siente humillada: deja de entrar al chat y no quiere ir al colegio. Mateo dice: «Yo no lo hice, solo lo vi». Pero el meme ya está en muchos celulares y ya nadie lo controla.',
+q:'¿Qué deberían hacer Sofía y Mateo ahora?',
+o:['Nada: ellos no crearon el meme','Dejar de reenviarlo, reportarlo y apoyar a Laura','Borrar el chat para que nadie se entere','Publicar otro meme para defender a Laura'],c:1,
+why:'Reenviar también es participar. Parar la cadena, reportar y acompañar a la persona afectada es lo que más ayuda.'},
+{t:'vf',i:'⚡',title:'Relámpago: verdad o mito',it:[
+['Si una publicación tiene muchos «me gusta», entonces es verdad.',0,'Los «me gusta» miden popularidad, no verdad.'],
+['Una IA siempre dice la verdad.',0,'Puede equivocarse o inventar datos con mucha seguridad.'],
+['Pedir permiso antes de publicar la foto de alguien es una muestra de respeto.',1,'Tu imagen y la de otros merecen cuidado.'],
+['Una contraseña larga, con letras, números y símbolos, es más segura.',1,'Mientras más larga y variada, más difícil de adivinar.'],
+['Si borro una publicación, ya nunca existió en ningún lado.',0,'Alguien pudo guardar una captura o una copia.'],
+['Un buen prompt incluye contexto: qué quieres, para qué y en qué formato.',1,'Mientras más claro, mejor respuesta.']]},
+{t:'caso',i:'📖',title:'La tarea hecha por la IA',
+a:'Camilo debe entregar un ensayo sobre el cambio climático. Le escribe a una IA: «hazme el ensayo», lo copia sin leerlo y lo entrega. Está muy bien redactado y se siente tranquilo.',
+b:'Al día siguiente la profesora le pide explicar con sus palabras un dato del texto. Camilo no puede: ese dato era inventado. Las IA a veces afirman cosas falsas con mucha seguridad, y Camilo no lo verificó.',
+q:'¿Cuál sería un mejor uso de la IA para Camilo?',
+o:['Pedirle ideas y explicaciones, verificar los datos y escribir él mismo','Copiar todo igual, pero cambiando el título','No usar nunca ninguna herramienta digital','Pedirle que invente fuentes para que parezca serio'],c:0,
+why:'La IA es una ayudante: sirve para entender y practicar, pero pensar y verificar sigue siendo responsabilidad tuya.'},
+{t:'prompt',i:'✍️',title:'Laboratorio de prompts',m:'Quieren que una IA los ayude a estudiar para una evaluación de ciencias sobre el sistema solar. Armen un prompt claro, pieza por pieza.',sl:[
+{l:'ROL (¿quién será la IA?)',o:[['Actúa como un tutor de ciencias paciente.',1,'Un rol claro orienta el estilo de la respuesta.'],['Eres mi amigo.',0,'Muy vago: no dice cómo debe ayudar.'],['Responde.',0,'Sin rol ni intención, la IA adivina.']]},
+{l:'CONTEXTO (¿quién eres y para qué?)',o:[['Estoy en grado séptimo y mi examen es sobre el sistema solar.',1,'El contexto da el nivel y el objetivo.'],['Es para algo del colegio.',0,'Demasiado general.'],['Tengo afán.',0,'Eso no le sirve a la IA para ayudarte mejor.']]},
+{l:'TAREA (¿qué debe hacer?)',o:[['Hazme 5 preguntas de práctica y corrígelas una por una.',1,'Tarea concreta, y te hace pensar a ti.'],['Hazme la tarea completa.',0,'Así no aprendes y no es honesto.'],['Dime todo sobre el sistema solar.',0,'Demasiado amplio: recibirás una montaña de texto.']]},
+{l:'FORMATO (¿cómo quieres la respuesta?)',o:[['Respóndeme en una lista corta y con palabras sencillas.',1,'El formato vuelve la respuesta fácil de estudiar.'],['Responde larguísimo y muy técnico.',0,'Será difícil de entender y de estudiar.'],['Como quieras.',0,'Sin formato no sabes qué obtendrás.']]}]},
+{t:'caso',i:'📖',title:'El video demasiado bueno',
+a:'En redes circula un video de un cantante famoso que «anuncia» que regalará dinero a quien comparta el video y deje sus datos. Se ve muy real y ya tiene miles de compartidos.',
+b:'Valentina nota detalles raros: la voz suena algo robótica, la cuenta que lo publicó es nueva y el cantante no dice nada en su perfil oficial. Hoy la IA permite crear videos y voces falsas muy convincentes.',
+q:'¿Qué debería hacer Valentina?',
+o:['Compartirlo rápido para no perder el premio','Dejar sus datos «por si acaso»','Verificar en las cuentas oficiales y no dar sus datos','Comentar insultando al cantante'],c:2,
+why:'Antes de creer o compartir, se verifica en fuentes oficiales. Los videos falsos y los premios fáciles buscan tus datos.'},
+{t:'det',i:'🕵️',title:'Detective: ¡estafa a la vista!',sg:[
+['📩 Mensaje de «Premios-Tec»:',0,'Cualquiera puede ponerle un nombre bonito a un mensaje.'],
+['¡FELICIDADES! Ganaste una tablet.',1,'Un premio que no pediste ni concursaste es señal clásica de estafa.'],
+['Tienes solo 10 minutos para reclamarla.',1,'La urgencia busca que no pienses ni verifiques.'],
+['Entra a bit.ly/premios-gratis',1,'Enlace acortado y desconocido: no sabes a dónde lleva.'],
+['para verificar tu identidad,',0,'Es solo la excusa; la señal real es lo que piden a continuación.'],
+['escribe tu contraseña y la de tus papás.',1,'Nadie serio pide contraseñas. Jamás se comparten.'],
+['No se lo cuentes a nadie.',1,'Pedir secreto evita que un adulto te ayude a detectar el engaño.'],
+['Saludos, equipo de soporte.',0,'Firmar como «soporte» no prueba nada.']]},
+{t:'caso',i:'📖',title:'La contraseña del mejor amigo',
+a:'Dani y Jero son mejores amigos y se cuentan todo. Un día Jero le pide la contraseña de su cuenta de videojuegos «para subirle de nivel». Dani confía y se la da.',
+b:'Semanas después se pelean. Jero entra a la cuenta, cambia el correo de recuperación y escribe mensajes feos desde el perfil de Dani. Ahora Dani no puede recuperar su cuenta fácilmente.',
+q:'¿Qué enseña este caso sobre las contraseñas?',
+o:['Se comparten con los mejores amigos','Mientras más corta, mejor, para recordarla','Se dejan escritas junto al computador','Son personales: no se comparten y se cambian si hay dudas'],c:3,
+why:'Una contraseña es la llave de tu casa digital. Las amistades cambian; tu cuenta debe seguir siendo solo tuya.'},
+{t:'vf',i:'⚡',title:'Relámpago final',it:[
+['Si una IA me da una fuente, ya no necesito comprobarla.',0,'Puede inventar fuentes: siempre se verifican.'],
+['Antes de subir una foto de un amigo, conviene pedirle permiso.',1,'Es respeto por su imagen y su privacidad.'],
+['En los juegos en línea puedo dar mi dirección y mi colegio a cualquiera.',0,'Con desconocidos no se comparten datos personales.'],
+['Usar la IA para entender un tema y luego explicarlo con mis palabras es buen uso.',1,'La IA acompaña tu aprendizaje, no lo reemplaza.'],
+['Reenviar un mensaje hiriente no es grave si yo no lo escribí.',0,'Reenviar también hace daño y te vuelve parte de la cadena.'],
+['Si me presionan con «solo tienes 5 minutos», puedo detenerme a verificar.',1,'La urgencia es una táctica de engaño: se puede frenar.']]} 
+];
+const $=s=>document.querySelector(s);
+const esc=s=>s.replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const shuf=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+let G={n:['Jugador 1','Jugador 2'],pts:0,cb:0,good:0,bad:0,deb:0},idx=-1,T=null,T0=0,TD=0;
+const nm=k=>`<b class="c${k}">${esc(G.n[k])}</b>`;
+function hdr(a){$('#n0').textContent=G.n[0];$('#n1').textContent=G.n[1];$('#sc').textContent=G.pts;
+ $('#cb').textContent=G.cb>=2?'🔥 Racha x'+(1+Math.min(G.cb-1,4)*.25):'';$('.p0').classList.toggle('act',a===0);$('.p1').classList.toggle('act',a===1)}
+function trk(){$('#nodes').innerHTML=R.map((r,i)=>`<div class="nd ${i<idx?'dn':i===idx?'on':''}">${r.i}</div>`).join('');
+ $('#ship').style.left=(Math.min(Math.max(idx,0),R.length-1)+.5)/R.length*100+'%'}
+function tmr(sec,fn){clearTimeout(T);$('#tbw').hidden=false;const b=$('#tb');b.style.transition='none';b.style.width='100%';void b.offsetWidth;
+ b.style.transition=`width ${sec}s linear`;b.style.width='0';T0=Date.now();TD=sec;T=setTimeout(fn,sec*1000)}
+const left=()=>Math.max(0,TD-(Date.now()-T0)/1000);
+function stop(){clearTimeout(T);const b=$('#tb'),w=b.getBoundingClientRect().width/(b.parentElement.getBoundingClientRect().width||1);b.style.transition='none';b.style.width=w*100+'%'}
+function pop(t){const d=document.createElement('div');d.className='pop';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),1300)}
+function boom(){for(let i=0;i<30;i++){const c=document.createElement('span');c.className='conf';c.textContent=['🎉','⭐','✨','⛵','💡'][i%5];
+ c.style.left=Math.random()*95+'vw';c.style.animationDelay=Math.random()*1.2+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),4200)}}
+function gain(b,ok){if(!ok){G.cb=0;G.bad++;hdr();return 0}G.cb++;G.good++;const p=Math.round(b*(1+Math.min(G.cb-1,4)*.25));G.pts+=p;pop('+'+p);hdr();return p}
+function next(){idx++;go()}
+function go(){clearTimeout(T);$('#tbw').hidden=true;if(idx>=R.length)return fin();trk();hdr(-1);F[R[idx].t](R[idx])}
+const F={};
+F.caso=r=>{const f=idx%2,ord=[f,1-f];let s=0,att=0;const ex=[];
+ const read=()=>{const k=ord[s];$('#stage').innerHTML=`<div class="tag">📖 ${r.title}</div><div class="card k${k}"><h3>${nm(k)}, lee en voz alta · parte ${s+1} de 2</h3><p class="read">${s?r.b:r.a}</p><button class="btn" id="ok">${s?'¡Leímos todo! A decidir ▶':'Listo, ahora lee tu pareja ▶'}</button></div>`;
+  hdr(k);$('#ok').onclick=()=>{s++;if(s<2)read();else{tmr(40,()=>res(-1));ask(f)}}};
+ const ask=pr=>{$('#stage').innerHTML=`<div class="tag">${r.title}</div><div class="card"><details><summary>📖 Volver a leer el caso</summary><p>${r.a}</p><p>${r.b}</p></details><h3>🤔 ${r.q}</h3><p class="hint">${nm(pr)} propone su respuesta. Su pareja debe estar de acuerdo.</p>${r.o.map((o,i)=>`<button class="opt k${pr}" data-i="${i}"${ex.includes(i)?' disabled':''}>${o}</button>`).join('')}</div>`;
+  hdr(pr);document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>cf(pr,+b.dataset.i))};
+ const cf=(pr,k)=>{$('#stage').innerHTML=`<div class="card"><h3>${r.q}</h3><div class="pick c${pr}">${nm(pr)} propone:<br><b>${r.o[k]}</b></div><p class="read">${nm(1-pr)}, ¿están de acuerdo?</p><div class="row"><button class="btn ok" id="y">✅ Sí, de acuerdo</button><button class="btn no" id="n">🤔 Yo elegiría otra</button></div></div>`;
+  hdr(1-pr);$('#y').onclick=()=>res(k);$('#n').onclick=()=>{ex.push(k);att++;G.deb++;ask(1-pr)}};
+ const res=k=>{const L=left();stop();const ok=k===r.c,p=gain(Math.max(25,100-att*25)+Math.round(L*2),ok);
+  $('#stage').innerHTML=`<div class="card ${ok?'good':'bad'}"><h2>${k<0?'⏰ ¡Se acabó el tiempo!':ok?'🎉 ¡Correcto! +'+p:'😬 Esta vez no'}</h2><p>Respuesta: <b>${r.o[r.c]}</b></p><p>${r.why}</p><button class="btn" id="nx">Siguiente ▶</button></div>`;
+  hdr(-1);if(ok)boom();$('#nx').onclick=next};
+ read()};
+F.vf=r=>{let j=0,sc=0;
+ const step=()=>{if(j>=r.it.length){$('#stage').innerHTML=`<div class="card"><h2>⚡ ¡Relámpago terminado!</h2><p class="read">Aciertos: <b>${sc}</b> de ${r.it.length}</p><button class="btn" id="nx">Siguiente ▶</button></div>`;hdr(-1);$('#nx').onclick=next;return}
+  const [s,v]=r.it[j],w=r.it[j][2],k=(idx+j)%2;
+  $('#stage').innerHTML=`<div class="tag">⚡ ${r.title} · ${j+1}/${r.it.length}</div><div class="card k${k}"><h3>${nm(k)}, ¡te toca!</h3><p class="read">${s}</p><div class="row"><button class="btn ok" data-v="1">✔ Verdadero</button><button class="btn no" data-v="0">✖ Falso</button></div></div>`;hdr(k);
+  const done=a=>{const L=left();stop();const ok=a===v,p=gain(50+Math.round(L*3),ok);
+   $('#stage').innerHTML=`<div class="card ${ok?'good':'bad'}"><h2>${a<0?'⏰ ¡Tiempo!':ok?'✅ +'+p:'❌ Ups'}</h2><p>Era <b>${v?'verdadero':'falso'}</b>. ${w}</p></div>`;if(ok)sc++;j++;setTimeout(step,2600)};
+  tmr(10,()=>done(-1));document.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>done(+b.dataset.v))};
+ step()};
+F.prompt=r=>{let s=0,sc=0;const parts=[];
+ const bub=()=>`<div class="bub">${parts.length?parts.map(p=>`<span class="chip ${p[1]?'g':'b'}">${p[0]}</span>`).join(' '):'<i>Aquí aparecerá su prompt…</i>'}</div>`;
+ const end=()=>{const bonus=sc===4?gain(100,true):0,m=sc===4?'🏆 ¡Prompt maestro! Rol, contexto, tarea y formato: así se pide bien. +'+bonus:sc>=2?'Buen intento: cambien las piezas flojas por unas más concretas.':'Un prompt vago da respuestas vagas. ¡Recuerden esto cuando usen IA!';
+  if(sc===4)boom();$('#stage').innerHTML=`<div class="card"><h2>✍️ Su prompt final</h2>${bub()}<p class="read">${sc} de 4 piezas fuertes. ${m}</p><button class="btn" id="nx">Siguiente ▶</button></div>`;hdr(-1);$('#nx').onclick=next};
+ const step=()=>{if(s>=r.sl.length)return end();const sl=r.sl[s],k=s%2,os=shuf(sl.o);
+  $('#stage').innerHTML=`<div class="tag">✍️ ${r.title} · pieza ${s+1}/${r.sl.length}</div><div class="card"><p>🎯 <b>Misión:</b> ${r.m}</p>${bub()}</div><div class="card k${k}"><h3>${nm(k)}, elige: ${sl.l}</h3>${os.map((o,i)=>`<button class="opt k${k}" data-i="${i}">${o[0]}</button>`).join('')}</div>`;hdr(k);
+  document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const o=os[+b.dataset.i];parts.push(o);if(o[1])sc++;const p=gain(75,!!o[1]);
+   $('#stage').innerHTML=`<div class="card">${bub()}</div><div class="card ${o[1]?'good':'bad'}"><h3>${o[1]?'✅ ¡Buena pieza! +'+p:'⚠️ Pieza floja'}</h3><p>${o[2]}</p></div>`;s++;setTimeout(step,2400)})};
+ step()};
+F.det=r=>{let t=idx%2,found=0,note='';const st=[],tot=r.sg.filter(x=>x[1]).length;
+ const end=w=>{const L=left();stop();if(w){gain(Math.round(L*3),true);boom()}
+  $('#stage').innerHTML=`<div class="card ${w?'good':'bad'}"><h2>${w?'🕵️ ¡Las encontraron todas!':'⏰ Se acabó el tiempo'}</h2><p>Señales de alerta de un mensaje fraudulento:</p><ul>${r.sg.filter(x=>x[1]).map(x=>`<li><b>${x[0]}</b> ${x[2]}</li>`).join('')}</ul><button class="btn" id="nx">Siguiente ▶</button></div>`;hdr(-1);$('#nx').onclick=next};
+ const draw=()=>{$('#stage').innerHTML=`<div class="tag">🕵️ ${r.title}</div><div class="card k${t}"><h3>${nm(t)}, ¡toca una señal de alerta!</h3><p class="hint">Se turnan. Encontradas: ${found} de ${tot}. Tocar algo inofensivo rompe la racha.</p><div class="msgb">${r.sg.map((x,i)=>`<span class="sg ${st[i]||''}" data-i="${i}">${x[0]}</span>`).join(' ')}</div><p class="read">${note}</p></div>`;hdr(t);
+  document.querySelectorAll('.sg').forEach(e=>e.onclick=()=>{const i=+e.dataset.i;if(st[i])return;const x=r.sg[i];
+   if(x[1]){st[i]='f';found++;gain(60,true);note='🚩 '+x[2]}else{st[i]='n';gain(0,false);note='😅 Inofensivo: '+x[2]}
+   t=1-t;if(found===tot)end(true);else draw()})};
+ tmr(55,()=>end(false));draw()};
+function fin(){stop();trk();hdr(-1);const n=G.good+G.bad,acc=n?Math.round(G.good/n*100):0;
+ const rk=acc>=85?['🏴‍☠️','Capitanes del ciberespacio']:acc>=65?['🧭','Navegantes expertos']:['⚓','Grumetes en práctica'];boom();
+ $('#stage').innerHTML=`<div class="card hero"><div class="big">${rk[0]}</div><h2>${nm(0)} y ${nm(1)}: ${rk[1]}</h2><p class="read"><b>${G.pts}</b> puntos · <b>${acc}%</b> de aciertos · <b>${G.deb}</b> debates entre ustedes</p>
+ <div style="text-align:left"><h3>🧭 Lo que me llevo</h3><ul><li>Pienso antes de reenviar: compartir también es participar.</li><li>Verifico antes de creer: los «me gusta» y la IA no son prueba de verdad.</li><li>Un buen prompt tiene rol, contexto, tarea y formato.</li><li>Mi contraseña es solo mía.</li></ul><p class="hint">Para decir en voz alta: cada uno cuenta a la clase una señal de alerta distinta que recordará.</p></div>
+ <button class="btn" id="again">🔁 Jugar de nuevo</button></div>`;$('#again').onclick=intro}
+function intro(){idx=-1;G={n:['Jugador 1','Jugador 2'],pts:0,cb:0,good:0,bad:0,deb:0};$('#tbw').hidden=true;trk();hdr(-1);
+ $('#stage').innerHTML=`<div class="card hero"><div class="big">⛵</div><h1>Navegar: Misión en Red</h1><p class="read">Son una <b>tripulación de dos</b> en un solo dispositivo. Se turnan para <b>leer en voz alta</b> (cada uno tiene una parte distinta del caso) y las respuestas se deciden <b>juntos</b>: uno propone y el otro debe estar de acuerdo.</p><p class="hint">⚡ Más rápido, más puntos · 🔥 Las rachas multiplican · 🤝 Si no coinciden, ¡a debatir!</p><label>🔵 Jugador 1<input id="i0" maxlength="14" placeholder="Nombre"></label><label>🩷 Jugador 2<input id="i1" maxlength="14" placeholder="Nombre"></label><button class="btn" id="go">⛵ ¡Zarpar!</button></div>`;
+ $('#go').onclick=()=>{G.n=[$('#i0').value.trim()||'Jugador 1',$('#i1').value.trim()||'Jugador 2'];G.cb=0;idx=0;go()}}
+intro();
+</script>
+</body>
+</html>
